@@ -3,6 +3,9 @@ packages = [
     "pyroll" # place your package in the pyroll namespace
 ]
 
+[metadata]
+allow-direct-references = true
+
 [version]
 path = "pyroll/shida_flow_stress.py"
 
@@ -17,10 +20,14 @@ dependencies = [
 [envs.docs]
 path = ""
 dependencies = [
+    "pygments ~= 2.0",
+    "pytask",
+    "pytask-latex",
+    "matplotlib"
 ]
 
 [envs.docs.scripts]
-build = "pandoc -o docs/docs.pdf docs/docs.md"
+build = "python -m pytask" # compile LaTeX docs with latexmk
 
 [envs.test]
 path = ""

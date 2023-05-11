@@ -1,0 +1,110 @@
+%! suppress = TooLargeSection
+%! suppress = SentenceEndWithCapital
+%! suppress = TooLargeSection
+% Preamble
+\documentclass[11pt]{PyRollDocs}
+\usepackage{textcomp}
+\usepackage{csquotes}
+\usepackage{wasysym}
+
+\addbibresource{refs.bib}
+
+% Document
+\begin{document}
+
+    \title{PyRolL Shida flow stress Plugin}
+    \author{Christoph Renzing}
+    \date{\today}
+
+    \maketitle
+
+    This plugin provides the implementation of the constitutive equation from \textcite{Shida1968, Shida1969} to calculate the flow stress of low alloyed carbon steels.
+
+
+    \section{Model approach}\label{sec:model-approach}
+
+    The model equation \ref{eq:shida-flow-stress} was derived from flow stress measurements from \textcite{Suzuki1968} who investigated several low alloyed carbon steels.
+
+    \begin{equation}
+        k_f = \sigma_f f_{\epsilon} f_{\dot{\epsilon}}
+        \label{eq:shida-flow-stress}
+    \end{equation}
+
+    From these measurements \textcite{Shida1968, Shida1969} derived his model equation which takes into account the strain $\epsilon$, strain rate $\dot{\epsilon}$, absolute temperature $T$ as well as the carbon content $C$ of the material.
+    The author showed that the model also works for low alloyed steels when replacing the carbon content which the equivalent carbon content $\bar{C}$.
+    The model equation is valid for strains of up to 0.7, temperatures between \qty{700}{\degree\celsius} and \qty{1200}{\degree\celsius} and strain rates of \qty{0.1}{\per\second} to \qty{100}{\per\second}.
+    The maximum carbon content is 1.2 weight percent.
+
+    The focal point of the model is the normalized temperature $\bar{T}$ which is calculated using equation \ref{eq:normalized-temperature}.
+
+    \begin{equation}
+        \bar{T} = \frac{T}{1000}
+        \label{eq:normalized-temperature}
+    \end{equation}
+
+    Further the author provides different variants of deformation resistance contribution $\sigma_f$, the strain contribution $f_{\epsilon}$ (see equation \ref{eq:strain-contribution}) as well as the strain rate contribution $f_{\dot{\epsilon}}$ (see equation \ref{eq:strain-rate-contribution}) if the normalized temperature is greater or smaller than the phase transformation temperature $T_p$.
+    The latter is calculated using equation~\ref{eq:phase-transformation-temperature}.
+
+    \begin{equation}
+        \begin{aligned}
+            f_{\epsilon} &= 1.3 \left( \frac{\epsilon}{0.2} - 0.3 \frac{\epsilon}{0.2} \right)^n \\
+            n &= 0.41-0.07 C
+        \end{aligned}
+        \label{eq:strain-contribution}
+    \end{equation}
+
+    \begin{equation}
+        f_{\dot{\epsilon}} = \left( \frac{\dot{\epsilon}}{10} \right)^m
+        \label{eq:strain-rate-contribution}
+    \end{equation}
+
+    \begin{equation}
+        T_p = 0.95 \frac{C + 0.41}{C+ 0.32}
+        \label{eq:phase-transformation-temperature}
+    \end{equation}
+
+    If the normalized temperature is above the phase transformation temperature the deformation resistance contribution as well as the exponent of the strain rate contribution are calculated using equations:
+
+    \begin{equation}
+        \begin{aligned}
+            g(C,T) &= 1 \\
+            \sigma_f &= 0.28 * g(C,t) \exp \left( \frac{5}{\bar{T}} - \frac{0.01}{C + 0.05} \right) \\
+            m &= (-0.019C - 0.126)\bar{T} + (0.075C-0.05)
+        \end{aligned}
+        \label{eq:above-phase-transformation}
+    \end{equation}
+
+    If the normalized temperature is below the phase transformation temperature the equations change to:
+
+    \begin{equation}
+        \begin{aligned}
+            g(C,T) &= 30 ( C +0.9) \exp \left( \bar{T} - 0.95 \frac{C + 0.49}{C +0.42} \right)^2 + \frac{C + 0.06}{C + 0.09} \\
+            \sigma_f &= 0.28 * g(C,t) \exp \left( \frac{5}{\bar{T}} - \frac{0.01}{C + 0.05} \right) \\
+            m &= (-0.081 C - 0.154) \bar{T} + (-0.019 C + 0.207) + \frac{0.027}{C+0.320}
+        \end{aligned}
+        \label{eq:below-phase-transformation}
+    \end{equation}
+
+
+    \section{Usage instructions}\label{sec:usage-instructions}
+
+    The plugin can be loaded under the name \texttt{pyroll\_shida\_flow\_stress}.
+    The plugin defines the hooks
+
+    \begin{table}[h]
+        \centering
+        \caption{Hooks specified by this plugin.}
+        \label{tab:hookspecs}
+        \begin{tabular}{ll}
+            \toprule
+            Hook name                       & Meaning                                 \\
+            \midrule
+            \texttt{flow\_stress}           & Flow stress of the material             \\
+            \texttt{flow\_stress\_function} & Flow stress as a function of the strain \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \printbibliography
+
+\end{document}
