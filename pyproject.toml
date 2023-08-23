@@ -1,6 +1,6 @@
 [project]
 name = "pyroll-shida-flow-stress"
-description = "Plugin for PyRoll providing the constitutive flow stress function from S. Shida."
+description = "Plugin for PyRolL providing the constitutive flow stress function from S. Shida."
 authors = [
     { name = "Christoph Renzing", email = "christoph.renzing@imf.tu-freiberg.de" }
 ]
@@ -18,7 +18,7 @@ classifiers = [
 
 requires-python = ">=3.9, <4.0"
 dependencies = [
-    "pyroll-core",
+    "pyroll-core~=2.0",
 ]
 
 dynamic = ["version"]
