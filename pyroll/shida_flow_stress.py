@@ -2,7 +2,7 @@ import numpy as np
 
 from pyroll.core import DeformationUnit
 
-VERSION = "3.0"
+VERSION = "3.0.0"
 
 
 @DeformationUnit.Profile.flow_stress
